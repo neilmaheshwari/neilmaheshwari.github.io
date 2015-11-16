@@ -30,19 +30,27 @@ Target "Generate" (fun _ ->
       fileInfo.CopyTo(Path.Combine(relative "output/content", fileInfo.Name)) |> ignore
     trace "Output directories created and content files copied"
 
-    if File.Exists(Path.Combine(relative "output/content", "fsharp-style.css")) then
-        File.Delete (Path.Combine(relative "output/content", "fsharp-style.css"))
+    FileUtils.rm_rf (relative "output/content/stylesheets")
+    FileUtils.cp_r (relative "stylesheets") (relative "output/content/stylesheets")
 
-    if File.Exists(Path.Combine(relative "output/content", "fsharp-tips.js")) then
-        File.Delete (Path.Combine(relative "output/content", "fsharp-tips.js"))
-
-    File.Copy(Path.Combine(relative "stylesheets", "fsharp-style.css"), Path.Combine(relative "output/content", "fsharp-style.css"))
-    File.Copy(Path.Combine(relative "javascripts", "fsharp-tips.js"), Path.Combine(relative "output/content", "fsharp-tips.js"))
+    FileUtils.rm_rf (relative "output/content/javascripts")
+    FileUtils.cp_r (relative "javascripts") (relative "output/content/javascripts")
 
     let source = __SOURCE_DIRECTORY__
-    let template = Path.Combine(source, "fsharp-pages/templates/template-file.html")
+    let template = Path.Combine(source, "fsharp-pages/templates/github-template.html")
     let doc = Path.Combine(source, "output/content/probability.md")
     Literate.ProcessMarkdown(doc, template) 
 )
+
+Target "Publish" (fun _ ->
+    let relative subdir = Path.Combine(__SOURCE_DIRECTORY__, subdir)
+    trace "Copying html to root."
+    for fileInfo in DirectoryInfo(relative "output/content").EnumerateFiles() do
+      if fileInfo.Extension = ".html" then
+        FileUtils.cp fileInfo.FullName __SOURCE_DIRECTORY__
+)
+
+"Generate"
+    ==> "Publish"
 
 RunTargetOrDefault "Generate"

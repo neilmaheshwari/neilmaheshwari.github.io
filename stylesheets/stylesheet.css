@@ -157,7 +157,7 @@ p img {
   border: none;
 }
 
-pre, code {
+/*pre, code {
   width: 100%;
   color: #222;
   background-color: #fff;
@@ -187,7 +187,7 @@ pre code {
   display: block;
   box-shadow: none;
 }
-
+*/
 blockquote {
   color: #666;
   margin-bottom: 20px;
@@ -416,10 +416,10 @@ Small Device Styles
     font-size: 12px;
   }
 
-  code, pre {
+/*  code, pre {
     min-width: 320px;
     max-width: 480px;
     font-size: 11px;
   }
-
+*/
 }
