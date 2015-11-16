@@ -48,3 +48,7 @@ docs/content/license.md
 docs/content/release-notes.md
 .fake
 FSharp.Formatting.svclog
+
+# Generated FSharp.Formatting Output
+output/
+XmlWriter

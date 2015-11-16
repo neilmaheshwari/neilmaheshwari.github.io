@@ -25,8 +25,24 @@ Target "Generate" (fun _ ->
       Directory.CreateDirectory (relative "output/content") |> ignore
 
     for fileInfo in DirectoryInfo(relative "fsharp-pages/content").EnumerateFiles() do
+      if File.Exists(Path.Combine(relative "output/content", fileInfo.Name)) then 
+        File.Delete(Path.Combine(relative "output/content", fileInfo.Name))
       fileInfo.CopyTo(Path.Combine(relative "output/content", fileInfo.Name)) |> ignore
     trace "Output directories created and content files copied"
+
+    if File.Exists(Path.Combine(relative "output/content", "fsharp-style.css")) then
+        File.Delete (Path.Combine(relative "output/content", "fsharp-style.css"))
+
+    if File.Exists(Path.Combine(relative "output/content", "fsharp-tips.js")) then
+        File.Delete (Path.Combine(relative "output/content", "fsharp-tips.js"))
+
+    File.Copy(Path.Combine(relative "stylesheets", "fsharp-style.css"), Path.Combine(relative "output/content", "fsharp-style.css"))
+    File.Copy(Path.Combine(relative "javascripts", "fsharp-tips.js"), Path.Combine(relative "output/content", "fsharp-tips.js"))
+
+    let source = __SOURCE_DIRECTORY__
+    let template = Path.Combine(source, "fsharp-pages/templates/template-file.html")
+    let doc = Path.Combine(source, "output/content/probability.md")
+    Literate.ProcessMarkdown(doc, template) 
 )
 
 RunTargetOrDefault "Generate"
